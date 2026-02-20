@@ -1,128 +1,166 @@
-# ExpNo:10 Implementation of Classical Planning Algorithm
-# Algorithm or Steps Involved:
+<h1>ExpNo 9: Solve Wumpus World Problem using Python demonstrating Inferences from Propositional Logic</h1> 
+<h3>Name: Tamizh Tharanya V </h3>
+<h3>Register Number: 212224250018</h3>
+<H3>Aim:</H3>
+<p>
+    To solve  Wumpus World Problem using Python demonstrating Inferences from Propositional Logic
+</p>
+<h1>Problem Description</h1>
+<hr>
+<h2>Wumpus World</h2>
+<hr>
+The Wumpus world is a simple world example to illustrate the worth of a knowledge-based agent and to represent knowledge representation.
 
-### Name : JAYANTH S S
-### Reg. No : 212224050014
+The figure below shows a Wumpus world containing one pit and one Wumpus. There is an agent in room [1,1]. The goal of the agent is to exit the Wumpus world alive. The agent can exit the Wumpus world by reaching room [4,4]. The wumpus world contains exactly one Wumpus and one pit. There will be a breeze in the rooms adjacent to the pit, and there will be a stench in the rooms adjacent to Wumpus.
 
-<ol>
-  <li>Define the initial state</li>
-  <li>Define the goal state</li>
-  <li>Define the actions</li>
-  <li>Find a <b>plan</b> to reach the goal state</li>
-  <li>Print the plan</li>
-</ol>
+![image](https://github.com/natsaravanan/19AI405FUNDAMENTALSOFARTIFICIALINTELLIGENCE/assets/87870499/cd6b68dc-c79f-4dcb-8126-04da90d65912)
 
-# Example - 1
-```
-initial_state = {'A': 'Table', 'B': 'Table'}
-goal_state = {'A': 'B', 'B': 'Table'}
+<center>Wumpus World Representation</center>
+<p>
+This is a python program that uses propositional logic sentences to check which rooms are safe. 
 
-actions = {
-    'move_A_to_B': {'precondition': {'A': 'Table', 'B': 'Table'}, 'effect': {'A': 'B'}},
-    'move_B_to_Table': {'precondition': {'A': 'Table', 'B': 'B'}, 'effect': {'B': 'Table'}}
-}
+It is assumed that there will always be a safe path that the agent can take to exit the Wumpus world. The logical agent can take four actions: Up, Down, Left and Right. These actions help the agent move from one room to an adjacent room. The agent can perceive two things: Breeze and Stench.
+</p>
 
-plan = find_plan(initial_state, goal_state, actions)
-print(plan)
-```
-# Output:
-```
-['move_A_to_B']
-```
-# Example - 2
-```
-initial_state = {'A': 'Table', 'B': 'Table', 'C': 'Table'}
-goal_state = {'A': 'B', 'B': 'C', 'C': 'Table'}
+<hr>
+<h1>Sample Input and Output:</h1>
+<hr>
 
-actions = {
-    'move_A_to_B': {'precondition': {'A': 'Table', 'B': 'Table'}, 'effect': {'A': 'B'}},
-    'move_B_to_C': {'precondition': {'A': 'B', 'B': 'Table', 'C': 'Table'}, 'effect': {'B': 'C'}},
-    'move_C_to_Table': {'precondition': {'A': 'B', 'B': 'C', 'C': 'C'}, 'effect': {'C': 'Table'}}
-}
+![image](https://github.com/natsaravanan/19AI405FUNDAMENTALSOFARTIFICIALINTELLIGENCE/assets/87870499/8696111a-a4a7-47cb-ba4b-43a4ef88573f)
+![image](https://github.com/natsaravanan/19AI405FUNDAMENTALSOFARTIFICIALINTELLIGENCE/assets/87870499/4be5bf06-79fa-4fa0-9334-38a33f06060b)
+<hr>
 
-plan = find_plan(initial_state, goal_state, actions)
-print(plan)
-```
-# Output:
-```
-['move_A_to_B', 'move_B_to_C']
-```
-
-# Program
+<h3>Program : </h3>
 
 ```
-def is_goal_state(current_state, goal_state):
-    return current_state == goal_state
+python
+wumpus=[["Save","Breeze","PIT","Breeze"],
+        ["Smell","Save","Breeze","Save"],
+        ["WUMPUS","GOLD","PIT","Breeze"],
+        ["Smell","Save","Breeze","PIT"]]
 
-def apply_action(current_state, action_effect):
-    new_state = current_state.copy()
-    new_state.update(action_effect)
-    return new_state
+# Initial Variables
+row, column = 0, 0  # Starting position
+arrow = True  # Player has an arrow
+player = True  # Game loop control
+score = 0  # Initial score
 
-def find_plan(initial_state, goal_state, actions):
-    queue = [(initial_state, [])]
-    visited_states = set()
+while player:
+    choice = input("press u to move up\npress d to move down\npress l to move left\npress r to move right\n")
+    
+    if choice == "u":
+        if row != 0:
+            row -= 1
+        else:
+            print("move denied")
+        print("current location: ", wumpus[row][column], "\n")
 
-    while queue:
-        current_state, partial_plan = queue.pop(0)
+    elif choice == "d":
+        if row != 3:
+            row += 1
+        else:
+            print("move denied")
+        print("current location: ", wumpus[row][column], "\n")
 
-        if is_goal_state(current_state, goal_state):
-            return partial_plan
+    elif choice == "l":
+        if column != 0:
+            column -= 1
+        else:
+            print("move denied")
+        print("current location: ", wumpus[row][column], "\n")
 
-        if tuple(current_state.items()) in visited_states:
-            continue
+    elif choice == "r":
+        if column != 3:
+            column += 1
+        else:
+            print("move denied")
+        print("current location: ", wumpus[row][column], "\n")
 
-        visited_states.add(tuple(current_state.items()))
+    else:
+        print("move denied")
 
-        for action in actions:
-            if is_applicable(current_state, actions[action]['precondition']):
-                next_state = apply_action(current_state, actions[action]['effect'])
-                queue.append((next_state, partial_plan + [action]))
+    if wumpus[row][column] == "Smell" and arrow:
+        arrow_choice = input("do you want to throw an arrow-->\npress y to throw\npress n to save your arrow\n")
+        
+        if arrow_choice == "y":
+            arrow_throw = input("press u to throw up\npress d to throw down\npress l to throw left\npress r to throw right\n")
+            
+            if arrow_throw == "u" and row > 0:
+                if wumpus[row-1][column] == "WUMPUS":
+                    print("wumpus killed!")
+                    score += 1000
+                    print("score: ", score)
+                    wumpus[row-1][column] = "Save"
+                    wumpus[1][0] = "Save"
+                    wumpus[3][0] = "Save"
+                else:
+                    print("arrow wasted...")
+                    score -= 10
+                    print("score: ", score)
 
-    print("No plan exists.")
-    return None
-def is_applicable(current_state, precondition):
-    return all(current_state.get(key) == value for key, value in precondition.items())
-# Example
-initial_state = {'A': 'Table', 'B': 'Table'}
-goal_state = {'A': 'B', 'B': 'Table'}
+            elif arrow_throw == "d" and row < 3:
+                if wumpus[row+1][column] == "WUMPUS":
+                    print("wumpus killed!")
+                    score += 1000
+                    print("score: ", score)
+                    wumpus[row+1][column] = "Save"
+                    wumpus[1][0] = "Save"
+                    wumpus[3][0] = "Save"
+                else:
+                    print("arrow wasted...")
+                    score -= 10
+                    print("score: ", score)
 
-actions = {
-    'move_A_to_B': {'precondition': {'A': 'Table', 'B': 'Table'}, 'effect': {'A': 'B'}},
-    'move_B_to_Table': {'precondition': {'A': 'Table', 'B': 'B'}, 'effect': {'B': 'Table'}}
-}
+            elif arrow_throw == "l" and column > 0:
+                if wumpus[row][column-1] == "WUMPUS":
+                    print("wumpus killed!")
+                    score += 1000
+                    print("score: ", score)
+                    wumpus[row][column-1] = "Save"
+                    wumpus[1][0] = "Save"
+                    wumpus[3][0] = "Save"
+                else:
+                    print("arrow wasted...")
+                    score -= 10
+                    print("score: ", score)
 
-plan = find_plan(initial_state, goal_state, actions)
-print(plan)
+            elif arrow_throw == "r" and column < 3:
+                if wumpus[row][column+1] == "WUMPUS":
+                    print("wumpus killed!")
+                    score += 1000
+                    print("score: ", score)
+                    wumpus[row][column+1] = "Save"
+                    wumpus[1][0] = "Save"
+                    wumpus[3][0] = "Save"
+                else:
+                    print("arrow wasted...")
+                    score -= 10
+                    print("score: ", score)
 
-initial_state = {'A': 'Table', 'B': 'Table', 'C': 'Table'}
-goal_state = {'A': 'B', 'B': 'C', 'C': 'Table'}
+            arrow = False
 
-actions = {
-    'move_A_to_B': {'precondition': {'A': 'Table', 'B': 'Table'}, 'effect': {'A': 'B'}},
-    'move_B_to_C': {'precondition': {'A': 'B', 'B': 'Table', 'C': 'Table'}, 'effect': {'B': 'C'}},
-    'move_C_to_Table': {'precondition': {'A': 'B', 'B': 'C', 'C': 'C'}, 'effect': {'C': 'Table'}}
-}
+    if wumpus[row][column] == "WUMPUS":
+        score -= 1000
+        print("\nWumpus here!!\nYou Die\nAnd your score is: ", score, "\n")
+        break
 
-plan = find_plan(initial_state, goal_state, actions)
-print(plan)
+    if wumpus[row][column] == 'GOLD':
+        score += 1000
+        print("Congratulations! You found the GOLD!\nYour score is: ", score)
+        break
 
-initial_state = {'A': 'Table', 'B': 'Table'}
-goal_state = {'A': 'Table', 'B': 'Table'}
-
-actions = {
-    'move_A_to_B': {'precondition': {'A': 'Table', 'B': 'Table'}, 'effect': {'A': 'B'}}
-}
-
-plan = find_plan(initial_state, goal_state, actions)
-print(plan)
+    if wumpus[row][column] == 'PIT':
+        score -= 1000
+        print("Ahhhhh!!!!\nYou fell in a pit.\nYour score is: ", score, "\n")
+        break
 ```
+<hr>
 
-# Output:
+<h3>Output :</h3>
 
-<img width="375" height="166" alt="image" src="https://github.com/user-attachments/assets/807301f7-c097-449b-93f9-f09dabdf4ffb" />
+![image](https://github.com/user-attachments/assets/cdafd40e-53e9-4bb0-a460-e75dd8ca852e)
 
+<hr>
 
-# Result:
-
-Therefore, the Classical Planning Algorithm has been implemented successfully.
+<h3>Result :</h3>
+<p>Therefore, Wumpus World Problem using Python demonstrating Inferences from Propositional Logic solved successfully.</p>
